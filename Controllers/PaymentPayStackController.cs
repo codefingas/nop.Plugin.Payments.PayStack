@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
-using Nop.Plugin.Payments.PayStack.Models;
+using Nop.Plugin.Payments.Paystack.Models;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Messages;
@@ -18,10 +18,10 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 
-namespace Nop.Plugin.Payments.PayStack.Controllers
+namespace Nop.Plugin.Payments.Paystack.Controllers
 {
     [AutoValidateAntiforgeryToken]
-    public class PaymentPayStackController : BasePaymentController
+    public class PaymentPaystackController : BasePaymentController
     {
         #region Fields
 
@@ -38,7 +38,7 @@ namespace Nop.Plugin.Payments.PayStack.Controllers
         #endregion
 
         #region Ctor
-        public PaymentPayStackController(
+        public PaymentPaystackController(
           IOrderProcessingService orderProcessingService,
           IOrderService orderService,
           IPermissionService permissionService,
@@ -71,23 +71,23 @@ namespace Nop.Plugin.Payments.PayStack.Controllers
                 return AccessDeniedView();
 
             int storeScope = _storeContext.ActiveStoreScopeConfiguration;
-            var payStackPaymentSettings = _settingService.LoadSetting<PayStackPaymentSettings>(storeScope);
+            var PaystackPaymentSettings = _settingService.LoadSetting<PaystackPaymentSettings>(storeScope);
 
             var model = new ConfigurationModel
             {
-                SecretKey = payStackPaymentSettings.SecretKey,
-                AdditionalFee = payStackPaymentSettings.AdditionalFee,
-                EnableAdditionalFee = payStackPaymentSettings.EnableAdditionalFee,
+                SecretKey = PaystackPaymentSettings.SecretKey,
+                AdditionalFee = PaystackPaymentSettings.AdditionalFee,
+                EnableAdditionalFee = PaystackPaymentSettings.EnableAdditionalFee,
                 ActiveStoreScopeConfiguration = storeScope
             };
 
             if (storeScope <= 0)
-                return View("~/Plugins/Payments.PayStack/Views/Configure.cshtml", model);
+                return View("~/Plugins/Payments.Paystack/Views/Configure.cshtml", model);
 
-            model.SecretKey_OverrideForStore = _settingService.SettingExists(payStackPaymentSettings, x => x.SecretKey, storeScope);
-            model.AdditionalFee_OverrideForStore = _settingService.SettingExists(payStackPaymentSettings, x => x.AdditionalFee, storeScope);
-            model.EnableAdditionalFee_OverrideForStore = _settingService.SettingExists(payStackPaymentSettings, x => x.EnableAdditionalFee, storeScope);
-            return View("~/Plugins/Payments.PayStack/Views/Configure.cshtml", model);
+            model.SecretKey_OverrideForStore = _settingService.SettingExists(PaystackPaymentSettings, x => x.SecretKey, storeScope);
+            model.AdditionalFee_OverrideForStore = _settingService.SettingExists(PaystackPaymentSettings, x => x.AdditionalFee, storeScope);
+            model.EnableAdditionalFee_OverrideForStore = _settingService.SettingExists(PaystackPaymentSettings, x => x.EnableAdditionalFee, storeScope);
+            return View("~/Plugins/Payments.Paystack/Views/Configure.cshtml", model);
         }
 
         [HttpPost]
@@ -103,18 +103,18 @@ namespace Nop.Plugin.Payments.PayStack.Controllers
 
             // load settings for a chosen store scope
             var storeScope = _storeContext.ActiveStoreScopeConfiguration;
-            var payStackPaymentSettings = _settingService.LoadSetting<PayStackPaymentSettings>(storeScope);
+            var PaystackPaymentSettings = _settingService.LoadSetting<PaystackPaymentSettings>(storeScope);
 
-            payStackPaymentSettings.SecretKey = model.SecretKey;
-            payStackPaymentSettings.AdditionalFee = model.AdditionalFee;
-            payStackPaymentSettings.EnableAdditionalFee = model.EnableAdditionalFee;
+            PaystackPaymentSettings.SecretKey = model.SecretKey;
+            PaystackPaymentSettings.AdditionalFee = model.AdditionalFee;
+            PaystackPaymentSettings.EnableAdditionalFee = model.EnableAdditionalFee;
 
             /* We do not clear cache after each setting update.
              * This behavior can increase performance because cached settings will not be cleared 
              * and loaded from database after each update */
-            _settingService.SaveSettingOverridablePerStore(payStackPaymentSettings, x => x.SecretKey, model.SecretKey_OverrideForStore, storeScope, false);
-            _settingService.SaveSettingOverridablePerStore(payStackPaymentSettings, x => x.AdditionalFee, model.AdditionalFee_OverrideForStore, storeScope, false);
-            _settingService.SaveSettingOverridablePerStore(payStackPaymentSettings, x => x.EnableAdditionalFee, model.EnableAdditionalFee_OverrideForStore, storeScope, false);
+            _settingService.SaveSettingOverridablePerStore(PaystackPaymentSettings, x => x.SecretKey, model.SecretKey_OverrideForStore, storeScope, false);
+            _settingService.SaveSettingOverridablePerStore(PaystackPaymentSettings, x => x.AdditionalFee, model.AdditionalFee_OverrideForStore, storeScope, false);
+            _settingService.SaveSettingOverridablePerStore(PaystackPaymentSettings, x => x.EnableAdditionalFee, model.EnableAdditionalFee_OverrideForStore, storeScope, false);
             
             //now clear settings cache
             _settingService.ClearCache();
@@ -128,7 +128,7 @@ namespace Nop.Plugin.Payments.PayStack.Controllers
         {
             try
             {
-                PayStackPaymentSettings standardPaymentSettings = _settingService.LoadSetting<PayStackPaymentSettings>(_storeContext.ActiveStoreScopeConfiguration);
+                PaystackPaymentSettings standardPaymentSettings = _settingService.LoadSetting<PaystackPaymentSettings>(_storeContext.ActiveStoreScopeConfiguration);
 
                 string str = Request.QueryString.ToString();
                 NameValueCollection queryString = HttpUtility.ParseQueryString(str);

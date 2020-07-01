@@ -1,11 +1,11 @@
 using Nop.Core.Configuration;
 
-namespace Nop.Plugin.Payments.PayStack
+namespace Nop.Plugin.Payments.Paystack
 {
     /// <summary>
-    /// Represents settings of the PayStack Standard payment plugin
+    /// Represents settings of the Paystack Standard payment plugin
     /// </summary>
-    public class PayStackPaymentSettings : ISettings
+    public class PaystackPaymentSettings : ISettings
     {
         /// <summary>
         /// Gets or sets a value indicating the merchant secret key

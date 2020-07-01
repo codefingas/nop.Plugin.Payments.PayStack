@@ -3,8 +3,8 @@ using Nop.Web.Framework.Components;
 
 namespace Nop.Plugin.Payments.PayStack.Components
 {
-    [ViewComponent(Name = "PaymentPayStack")]
-    public class PaymentPayStackViewComponent : NopViewComponent
+    [ViewComponent(Name = "Paystack")]
+    public class PaystackViewComponent : NopViewComponent
     {
         public IViewComponentResult Invoke()
         {

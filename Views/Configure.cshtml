@@ -1,4 +1,4 @@
-﻿@model Nop.Plugin.Payments.PayStack.Models.ConfigurationModel
+﻿@model Nop.Plugin.Payments.Paystack.Models.ConfigurationModel
 @inject Nop.Core.IWebHelper webHelper
 @{
     Layout = "_ConfigurePlugin";
@@ -6,7 +6,7 @@
 
 @await Component.InvokeAsync("StoreScopeConfiguration")
 
-<form asp-controller="PaymentPayStack" asp-action="Configure" method="post">
+<form asp-controller="PaymentPaystack" asp-action="Configure" method="post">
     <div class="panel-group">
         <div class="panel panel-default">
             <div class="panel-body">
@@ -14,7 +14,7 @@
                     Paystack is one of the payment gateway's used in Nigeria.
                 </h3>
                 <ol>
-                    <li>You will need a Paystack Merchant account. If you don't already have one, you can sign up here: https://paystack.com/</li>
+                    <li>You will need a Paystack Merchant account. If you don't already have one, you can sign up here: https://Paystack.com/</li>
                     <li>Sign in to your Paystack Portal. Go to Setting, API Keys & Webhooks to obtain your secret live or test secret key.</li>
                 </ol>
 

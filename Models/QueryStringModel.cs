@@ -1,4 +1,4 @@
-﻿namespace Nop.Plugin.Payments.PayStack.Models
+﻿namespace Nop.Plugin.Payments.Paystack.Models
 {
     public class QueryStringModel
     {

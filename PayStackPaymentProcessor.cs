@@ -15,12 +15,12 @@ using Nop.Services.Payments;
 using Nop.Services.Plugins;
 using PayStack.Net;
 
-namespace Nop.Plugin.Payments.PayStack
+namespace Nop.Plugin.Payments.Paystack
 {
     /// <summary>
-    /// PayStackPaymentProcessor payment processor
+    /// PaystackPaymentProcessor payment processor
     /// </summary>
-    public class PayStackPaymentProcessor : BasePlugin, IPaymentMethod
+    public class PaystackPaymentProcessor : BasePlugin, IPaymentMethod
     {
         #region Fields
 
@@ -33,14 +33,14 @@ namespace Nop.Plugin.Payments.PayStack
         private readonly IPaymentService _paymentService;
         private readonly ISettingService _settingService;
         private readonly IWebHelper _webHelper;
-        private readonly PayStackPaymentSettings _payStackPaymentSettings;
+        private readonly PaystackPaymentSettings _PaystackPaymentSettings;
         private readonly ICustomerService _customerService;
 
         #endregion
 
         #region Ctor
 
-        public PayStackPaymentProcessor(CurrencySettings currencySettings,
+        public PaystackPaymentProcessor(CurrencySettings currencySettings,
           ICheckoutAttributeParser checkoutAttributeParser,
           ICurrencyService currencyService,
           IGenericAttributeService genericAttributeService,
@@ -50,7 +50,7 @@ namespace Nop.Plugin.Payments.PayStack
           ISettingService settingService,
           IWebHelper webHelper,
           ICustomerService customerService,
-          PayStackPaymentSettings payStackPaymentSettings)
+          PaystackPaymentSettings PaystackPaymentSettings)
         {
             _currencySettings = currencySettings;
             _checkoutAttributeParser = checkoutAttributeParser;
@@ -61,7 +61,7 @@ namespace Nop.Plugin.Payments.PayStack
             _paymentService = paymentService;
             _settingService = settingService;
             _webHelper = webHelper;
-            _payStackPaymentSettings = payStackPaymentSettings;
+            _PaystackPaymentSettings = PaystackPaymentSettings;
             _customerService = customerService;
         }
 
@@ -88,7 +88,7 @@ namespace Nop.Plugin.Payments.PayStack
             string storeLocation = _webHelper.GetStoreLocation(new bool?());
             Math.Round(postProcessPaymentRequest.Order.OrderTotal, 2);
 
-            PayStackApi payStackApi = new PayStackApi(_payStackPaymentSettings.SecretKey);
+            PayStackApi PaystackApi = new PayStackApi(_PaystackPaymentSettings.SecretKey);
             Customer customerById = _customerService.GetCustomerById(postProcessPaymentRequest.Order.CustomerId);
             string empty = string.Empty;
             string customerEmail = customerById.Email != null || customerById == null ? customerById.Email : _customerService.GetCustomerShippingAddress(customerById).Email;
@@ -103,13 +103,13 @@ namespace Nop.Plugin.Payments.PayStack
 
             string guidString = orderGuid.ToString();
             metadataObject["OrderGuid"] = (object)guidString;
-            request.CallbackUrl = storeLocation + "Plugins/PaymentPayStack/Callback";
+            request.CallbackUrl = storeLocation + "Plugins/PaymentPaystack/Callback";
             TransactionInitializeRequest initializeRequest = request;
             orderGuid = postProcessPaymentRequest.Order.OrderGuid;
 
             guidString = orderGuid.ToString();
             initializeRequest.Reference = guidString;
-            TransactionInitializeResponse initializeResponse = payStackApi.Transactions.Initialize(request, true);
+            TransactionInitializeResponse initializeResponse = PaystackApi.Transactions.Initialize(request, true);
 
             if (!initializeResponse.Status)
                 return;
@@ -137,7 +137,7 @@ namespace Nop.Plugin.Payments.PayStack
         /// <returns>Additional handling fee</returns>
         public decimal GetAdditionalHandlingFee(IList<ShoppingCartItem> cart)
         {
-            return _payStackPaymentSettings.EnableAdditionalFee ? _paymentService.CalculateAdditionalFee(cart, _payStackPaymentSettings.AdditionalFee, true) : decimal.Zero;
+            return _PaystackPaymentSettings.EnableAdditionalFee ? _paymentService.CalculateAdditionalFee(cart, _PaystackPaymentSettings.AdditionalFee, true) : decimal.Zero;
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace Nop.Plugin.Payments.PayStack
         /// </summary>
         public override string GetConfigurationPageUrl()
         {
-            return _webHelper.GetStoreLocation(new bool?()) + "Admin/PaymentPayStack/Configure";
+            return _webHelper.GetStoreLocation(new bool?()) + "Admin/PaymentPaystack/Configure";
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace Nop.Plugin.Payments.PayStack
         /// <returns>View component name</returns>
         public string GetPublicViewComponentName()
         {
-            return "PaymentPayStack";
+            return "PaymentPaystack";
         }
 
         /// <summary>
@@ -251,17 +251,17 @@ namespace Nop.Plugin.Payments.PayStack
         public override void Install()
         {
             //settings
-            _settingService.SaveSetting(new PayStackPaymentSettings());
+            _settingService.SaveSetting(new PaystackPaymentSettings());
 
             //locales
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.PayStack.Fields.SecretKey", "Paystack Secret Key", (string)null);
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.PayStack.Fields.SecretKey.Hint", "Copy your secret key from your Paystack dashboard. This can be either the test secret key or live secret key.", (string)null);
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.PayStack.Fields.RedirectionTip", "For security purposes, you will be redirected to Paystack site to complete the order.", (string)null);
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.PayStack.Fields.AdditionalFee", "Paystack Percentage fee", (string)null);
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.PayStack.Fields.AdditionalFee.Hint", "Enter Paystack percentage fee to charge your customers. This is the percentage Paystack charges per transaction.", (string)null);
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.PayStack.Fields.EnableAdditionalFee", "Enable Additional fee", (string)null);
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.PayStack.Fields.EnableAdditionalFee.Hint", "Check this box if you want Paystack percentage charge to be calculated on checkout. Make sure you enter the percentage.", (string)null);
-            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.PayStack.PaymentMethodDescription", "For security purposes, you will be redirected to Paystack site to complete the order.", (string)null);
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Paystack.Fields.SecretKey", "Paystack Secret Key", (string)null);
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Paystack.Fields.SecretKey.Hint", "Copy your secret key from your Paystack dashboard. This can be either the test secret key or live secret key.", (string)null);
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Paystack.Fields.RedirectionTip", "For security purposes, you will be redirected to Paystack site to complete the order.", (string)null);
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Paystack.Fields.AdditionalFee", "Paystack Percentage fee", (string)null);
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Paystack.Fields.AdditionalFee.Hint", "Enter Paystack percentage fee to charge your customers. This is the percentage Paystack charges per transaction.", (string)null);
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Paystack.Fields.EnableAdditionalFee", "Enable Additional fee", (string)null);
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Paystack.Fields.EnableAdditionalFee.Hint", "Check this box if you want Paystack percentage charge to be calculated on checkout. Make sure you enter the percentage.", (string)null);
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Payments.Paystack.PaymentMethodDescription", "For security purposes, you will be redirected to Paystack site to complete the order.", (string)null);
 
             base.Install();
         }
@@ -272,17 +272,17 @@ namespace Nop.Plugin.Payments.PayStack
         public override void Uninstall()
         {
             //settings
-            _settingService.DeleteSetting<PayStackPaymentSettings>();
+            _settingService.DeleteSetting<PaystackPaymentSettings>();
 
             //locales
-            _localizationService.DeletePluginLocaleResource("Plugins.Payments.PayStack.Fields.SecretKey");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payments.PayStack.Fields.SecretKey.Hint");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payments.PayStack.Fields.RedirectionTip");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payments.PayStack.Fields.AdditionalFee");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payments.PayStack.Fields.AdditionalFee.Hint");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payments.PayStack.EnableAdditionalFee");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payments.PayStack.EnableAdditionalFee.Hint");
-            _localizationService.DeletePluginLocaleResource("Plugins.Payments.PayStack.PaymentMethodDescription");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Paystack.Fields.SecretKey");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Paystack.Fields.SecretKey.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Paystack.Fields.RedirectionTip");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Paystack.Fields.AdditionalFee");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Paystack.Fields.AdditionalFee.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Paystack.EnableAdditionalFee");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Paystack.EnableAdditionalFee.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Payments.Paystack.PaymentMethodDescription");
 
             base.Uninstall();
         }
@@ -329,7 +329,7 @@ namespace Nop.Plugin.Payments.PayStack
         /// <summary>
         /// Gets a payment method description that will be displayed on checkout pages in the public store
         /// </summary>
-        public string PaymentMethodDescription => _localizationService.GetResource("Plugins.Payments.PayStack.PaymentMethodDescription");
+        public string PaymentMethodDescription => _localizationService.GetResource("Plugins.Payments.Paystack.PaymentMethodDescription");
 
         #endregion
     }

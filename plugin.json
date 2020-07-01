@@ -1,13 +1,13 @@
 ﻿{
   "Group": "Payment methods",
-  "FriendlyName": "PayStack",
+  "FriendlyName": "Paystack",
   "SupportedVersions": [
     "4.30"
   ],
   "Author": "Adegbenga Adeye - adegbenga.adeye@outlook.com",
   "DisplayOrder": 1,
-  "FileName": "Nop.Plugin.Payments.PayStack.dll",
-  "Description": "This plugin allows paying with PayStack in Nigeria",
-  "SystemName": "Payments.PayStack",
+  "FileName": "Nop.Plugin.Payments.Paystack.dll",
+  "Description": "This plugin allows paying with Paystack in Nigeria",
+  "SystemName": "Payments.Paystack",
   "Version": "1.0"
 }
